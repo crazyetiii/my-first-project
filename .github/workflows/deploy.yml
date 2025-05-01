@@ -1,43 +1,36 @@
-name: Deploy Jekyll site to Pages
+name: Deploy Static Site
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    branches: [ main ]  # 在推送到main分支时触发
+    paths: 
+      - '_posts/*.md'   # 只有_posts目录下的md文件变更时才触发
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
-      # 确保这里使用的是 upload-pages-artifact 而不是 upload-artifact
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+    - uses: actions/checkout@v4
+    
+    # 安装必要的工具（如pandoc等）
+    - name: Setup environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pandoc
+        
+    # 将Markdown转换为HTML（这里使用简单的pandoc示例）
+    - name: Convert Markdown to HTML
+      run: |
+        mkdir -p public
+        for file in _posts/*.md; do
+          filename=$(basename "$file" .md)
+          pandoc "$file" -o "public/${filename}.html" --template=template.html
+        done
+        
+    # 部署到GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
