@@ -27,8 +27,9 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      # 确保这里使用的是 upload-pages-artifact 而不是 upload-artifact
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2  # 使用 v2 而不是 v3
+        uses: actions/upload-pages-artifact@v2
 
   deploy:
     environment:
@@ -39,4 +40,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2  # 更新到 v2
+        uses: actions/deploy-pages@v2
