@@ -1,0 +1,6 @@
+title: 我的 Markdown 站点
+description: 由 GitHub Actions 自动部署的 Markdown 站点
+theme: jekyll-theme-cayman
+
+# 可选：添加自定义域名
+# domain: example.com
