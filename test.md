@@ -1,3 +1,8 @@
+---
+layout: default
+title: 示例页面
+---
+
 # Markdown 快速入门指南
 
 ## 什么是 Markdown？
